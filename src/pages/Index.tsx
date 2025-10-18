@@ -4,10 +4,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setMobileMenuOpen(false);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const navItems = [
+    { id: 'home', label: 'Главная', icon: 'Home' },
+    { id: 'servers', label: 'Сервера', icon: 'Server' },
+    { id: 'mods', label: 'Моды', icon: 'Blocks' },
+    { id: 'voice', label: 'Голос', icon: 'Mic' },
+    { id: 'guide', label: 'Гайд', icon: 'BookOpen' },
+    { id: 'news', label: 'Новости', icon: 'Newspaper' }
+  ];
 
   const servers = [
     {
@@ -81,25 +101,44 @@ const Index = () => {
               <h1 className="text-lg sm:text-xl pixel-text text-primary">CraftHub</h1>
             </div>
             <div className="hidden md:flex gap-2">
-              {['Главная', 'Сервера', 'Моды', 'Голос', 'Гайд', 'Новости'].map((item) => (
+              {navItems.map((item) => (
                 <Button
-                  key={item}
-                  variant={activeSection === item.toLowerCase() ? 'default' : 'ghost'}
-                  onClick={() => setActiveSection(item.toLowerCase())}
+                  key={item.id}
+                  variant={activeSection === item.id ? 'default' : 'ghost'}
+                  onClick={() => scrollToSection(item.id)}
                   className="minecraft-button text-xs"
                 >
-                  {item}
+                  {item.label}
                 </Button>
               ))}
             </div>
-            <Button className="minecraft-button md:hidden" size="icon" variant="ghost">
-              <Icon name="Menu" size={20} />
-            </Button>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button className="minecraft-button md:hidden" size="icon" variant="ghost">
+                  <Icon name="Menu" size={20} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] bg-card border-border">
+                <div className="flex flex-col gap-1 mt-8">
+                  {navItems.map((item) => (
+                    <Button
+                      key={item.id}
+                      variant={activeSection === item.id ? 'default' : 'ghost'}
+                      onClick={() => scrollToSection(item.id)}
+                      className="w-full justify-start minecraft-button text-sm"
+                    >
+                      <Icon name={item.icon as any} size={18} className="mr-3" />
+                      {item.label}
+                    </Button>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
 
-      <section className="relative overflow-hidden py-20 md:py-32">
+      <section id="home" className="relative overflow-hidden py-20 md:py-32">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-in">
@@ -144,7 +183,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-card/50">
+      <section id="servers" className="py-16 bg-card/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl pixel-text mb-4">Наши серверы</h3>
@@ -183,7 +222,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-16">
+      <section id="mods" className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl pixel-text mb-4">Популярные моды</h3>
@@ -224,7 +263,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-card/50">
+      <section id="voice" className="py-16 bg-card/50">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
@@ -258,7 +297,7 @@ const Index = () => {
               </div>
             </div>
 
-            <div>
+            <div id="guide">
               <h3 className="text-2xl md:text-3xl pixel-text mb-6">Как начать?</h3>
               <Accordion type="single" collapsible className="space-y-3">
                 <AccordionItem value="item-1" className="border border-border rounded-lg px-4 minecraft-button">
@@ -299,7 +338,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-16">
+      <section id="news" className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl pixel-text mb-4">Новости сообщества</h3>
